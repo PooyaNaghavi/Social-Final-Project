@@ -1,51 +1,33 @@
-# Reference - http://stackoverflow.com/questions/8548030/why-does-pip-install-inside-python-raise-a-syntaxerror
-
-# import pip
-# pip.main(['install','gensim'])
-# pip.main(['install','nltk'])
-
-
-# Question C
-# Reference - Dr. Gene Moo Lee notes for Data Science
-
-import matplotlib.pyplot as matp
+import matplotlib.pyplot as plt
 import json
 import string
 import nltk
 import numpy as np
-
-# nltk.download()
+import utils
 from wordcloud import WordCloud
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import decomposition
 from gensim import corpora, models
 
+# nltk.download()   # use this once
+
 norm_list = []
-with open('Barack_Obama_tweets.json', 'r') as tweetfile:
-    jsonread = json.load(tweetfile)
-    for i in range(0, len(jsonread)):
-        unicodedeachtweet = jsonread[i]['text']
-        unicodedeachtweetwd = unicodedeachtweet.split()
-        unicodedeachtweetline = []
-        'To remove hyperlinks and usernames from tweets'
-        for word in unicodedeachtweetwd:
-            if word.startswith('http') or word.startswith('https') or word.startswith('@'):
-                continue
-            else:
-                unicodedeachtweetline.append(word)
-        unicodedfulltweet = " ".join(unicodedeachtweetline)
-        punct = string.punctuation
-        table_punct = str.maketrans(punct, len(punct) * " ")
-        norm = filter(lambda x: x in string.printable, unicodedfulltweet)
-        doc = str(norm).translate(table_punct).lower()
-        norm_list.append(doc)
+
+file = 'Donald_Trump_Tweets.json'
+
+tweets = utils.get_sentences(file)
+for tweet in tweets:
+    punct = string.punctuation
+    table_punct = str.maketrans(punct, len(punct) * " ")
+    norm = list(filter(lambda x: x in string.printable, tweet))
+    doc = "".join(norm).translate(table_punct).lower()
+    norm_list.append(doc)
 
 snst = SnowballStemmer("english")
 stemlist = []
 for tweet in norm_list:
     for word in tweet.split():
-        # print word
         if word.startswith('http') or word.startswith('https') or word.startswith('@'):
             continue
         else:
@@ -59,19 +41,20 @@ extrastop = ['trump', 'donald', 'RT', 'rt', 'http', 'https', 'lt', 'gt', 'realdo
              'wh', 'day']
 uniextrastop = []
 for j in extrastop:
-    uniextrastop.append(j.decode('utf-8'))
+    uniextrastop.append(j)
 
 nostop = ''
+print(stemlist)
 for k in stemlist:
-    if k.decode('utf-8') not in stopwords and k not in uniextrastop and len(k) > 1:
+    if k not in stopwords and k not in uniextrastop and len(k) > 1:
         nostop += ' ' + k
 
     # 'Word cloud generation'
 wordcld = WordCloud(max_font_size=50).generate(nostop)
-matp.figure()
-matp.imshow(wordcld)
-matp.axis("off")
-matp.show()
+plt.figure()
+plt.imshow(wordcld)
+plt.axis("off")
+plt.show()
 
 # Question D
 # Reference - Dr. Gene Moo Lee notes for Data Science
@@ -87,7 +70,7 @@ for tweet in norm_list:
         # print word
         if word.startswith('http') or word.startswith('https') or word.startswith('@'):
             continue
-        elif word.decode('utf-8') not in stopwords and word.decode('utf-8') not in uniextrastop and len(word) > 1:
+        elif word not in stopwords and word not in uniextrastop and len(word) > 1:
             stemming = snst.stem(word)
             eachtweet.append(stemming)
     tw = ' '.join(eachtweet)

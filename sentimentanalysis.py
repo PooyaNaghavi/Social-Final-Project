@@ -2,25 +2,16 @@ import json
 from textblob import TextBlob
 import matplotlib.pyplot as plt
 import numpy as np
-
+import utils
 
 polarity = []
 subjectivity = []
 
-with open('Donald_Trump_Tweets.json', 'r') as tweetfile:
-    jsonread = json.load(tweetfile)
+file = 'Donald_Trump_Tweets.json'
 
-for j in range(0, len(jsonread)):
-    eachtweet = jsonread[j]['text']
-    eachtweetwd = eachtweet.split()
-    tweetnohyp = []
-    for word in eachtweetwd:
-        if word.startswith('http') or word.startswith('https') or word.startswith('@'):
-            continue
-        else:
-            tweetnohyp.append(word)
-    tweetnohypstr = " ".join(tweetnohyp)
-    sentan = TextBlob(tweetnohypstr)
+tweets = utils.get_sentences(file)
+for tweet in tweets:
+    sentan = TextBlob(tweet)
     polarity.append(float(sentan.polarity))
     subjectivity.append(float(sentan.subjectivity))
 
