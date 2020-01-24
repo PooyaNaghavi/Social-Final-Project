@@ -24,7 +24,7 @@ class MyStreamer(TwythonStreamer):
         self.disconnect()
 
     def store_json(self):
-        with open('Donald_Trump_Tweets.json'.format(len(tweets)), 'w') as f:
+        with open('Donald_Trump_tweets.json'.format(len(tweets)), 'w') as f:
             json.dump(tweets, f, indent=4)
 
 
