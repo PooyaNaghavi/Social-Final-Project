@@ -1,12 +1,12 @@
 from twython import TwythonStreamer
 import json
 
-tweets = []
-
-
 class MyStreamer(TwythonStreamer):
-    def on_success(self, data):
+    def __init__(self, app_key, app_secret, oauth_token, oauth_token_secret, person):
+        self.person = person
+        super(MyStreamer, self).__init__(app_key, app_secret, oauth_token, oauth_token_secret)
 
+    def on_success(self, data):
         if 'lang' in data and data['lang'] == 'en':
             if 'Trump' in data['text'] or 'POTUS' in data['text'] or 'Donald Trump' in data[
                 'text'] or 'donaldjtrumpjr' in data['text'] or 'TRUMP' in data['text'] or 'realDonaldTrump' in data[
@@ -24,7 +24,7 @@ class MyStreamer(TwythonStreamer):
         self.disconnect()
 
     def store_json(self):
-        with open('Donald_Trump_tweets.json'.format(len(tweets)), 'w') as f:
+        with open(f'{self.person}_tweets.json'.format(len(tweets)), 'w') as f:
             json.dump(tweets, f, indent=4)
 
 
@@ -33,13 +33,15 @@ CONSUMER_SECRET = open('ConsumerSecret.txt', 'r').read()
 ACCESS_TOKEN = open('AccessToken.txt', 'r').read()
 ACCESS_TOKEN_SECRET = open('AccessTokenSecret.txt', 'r').read()
 
-while True:
-    if len(tweets) < 100000:
-        try:
-            stream = MyStreamer(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
-            userids = ["25073877", "813286"]  # Trump and Obama's userids
-            stream.statuses.filter(follow=userids)
-        except:
-            continue
-    else:
-        break
+for person in [('Donald_Trump', '25073877'), ('Barack_Obama', '813286')]:
+    tweets = []
+    while True:
+        if len(tweets) < 100000:
+            try:
+                stream = MyStreamer(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET, person=person[0])
+                userid = person[1]
+                stream.statuses.filter(follow=userid)
+            except:
+                continue
+        else:
+            break
