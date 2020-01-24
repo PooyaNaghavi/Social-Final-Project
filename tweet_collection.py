@@ -1,6 +1,7 @@
 from twython import TwythonStreamer
 import json
 
+
 class MyStreamer(TwythonStreamer):
     def __init__(self, app_key, app_secret, oauth_token, oauth_token_secret, person):
         self.person = person
@@ -8,12 +9,8 @@ class MyStreamer(TwythonStreamer):
 
     def on_success(self, data):
         if 'lang' in data and data['lang'] == 'en':
-            if 'Trump' in data['text'] or 'POTUS' in data['text'] or 'Donald Trump' in data[
-                'text'] or 'donaldjtrumpjr' in data['text'] or 'TRUMP' in data['text'] or 'realDonaldTrump' in data[
-                'text'] or 'Donald Trump Jr.' in data['text'] or 'trump' in data['text'] or 'trumprussia' in data[
-                'text']:
-                tweets.append(data)
-                print('received tweet #', len(tweets), data['text'][:500])
+            tweets.append(data)
+            print('received tweet #', len(tweets), data['text'][:500])
 
         if len(tweets) >= 1000:
             self.store_json()
@@ -24,7 +21,7 @@ class MyStreamer(TwythonStreamer):
         self.disconnect()
 
     def store_json(self):
-        with open(f'{self.person}_tweets.json'.format(len(tweets)), 'w') as f:
+        with open(f'{self.person}_tweets.json', 'w') as f:
             json.dump(tweets, f, indent=4)
 
 
