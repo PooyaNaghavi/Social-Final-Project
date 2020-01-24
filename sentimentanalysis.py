@@ -14,7 +14,6 @@ for j in range(0, len(jsonread)):
     eachtweet = jsonread[j]['text']
     eachtweetwd = eachtweet.split()
     tweetnohyp = []
-    'To remove hyperlinks and usernames from tweets and perform sentiment analysis'
     for word in eachtweetwd:
         if word.startswith('http') or word.startswith('https') or word.startswith('@'):
             continue

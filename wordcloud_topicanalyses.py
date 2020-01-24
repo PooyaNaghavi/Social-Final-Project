@@ -14,7 +14,7 @@ import string
 import nltk
 import numpy as np
 
-nltk.download()
+# nltk.download()
 from wordcloud import WordCloud
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
